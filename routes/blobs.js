@@ -100,11 +100,12 @@ router.route('/')
   });
 
   router.route('/:id')
-    .get(function(res,req,next){
+    .get(function(req,res,next){
       mongoose.model('Blob').findById(req.id, function(err,blob){
         if (err){
           console.log("GET Error: There was a problem retrieving: " + err);
         } else {
+          console.log("GET Retrieving ID: " + blob._id);
           var blobdob = blob.dob.toISOString();
           blobdob = blobdob.substring(0, blobdob.indexOf('T')); //filtering
           res.format({
@@ -130,7 +131,7 @@ router.route('/')
         console.log("GET Error: There was a problem retrieving " + err);
       } else {
         console.log("GET Retrieving ID: " + blob._id); //object id
-        var blobdb = blob.dob.toISOString();
+        var blobdob = blob.dob.toISOString();
         blobdob = blobdob.substring(0, blobdob.indexOf('T'));
         res.format({
           html: function(){
@@ -181,7 +182,7 @@ router.route('/')
 
   .delete(function(req,res){
     //find blob by Id
-    mongoose.model('Blob').findByID(req.id, function(err,blob){
+    mongoose.model('Blob').findById(req.id, function(err,blob){
       if (err){
         return console.error(err);
       } else {

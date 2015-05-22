@@ -5,19 +5,24 @@ block content
     #{title}
   ul
     -each blob, i in blobs
-      li
+      li Name:
         = blob.name
+      li Badge:
         = blob.badge
+      li Date of birth:
         = blob.dob
+      li Is loved?:
         = blob.isloved
-        = blob._id
+      li Blob ID:
+        = blob._id 
 
-        form(action='/blobs/#{blob._id}/edit', method='post', enctype='application/x-www-form-urlencoded')
-          //- not sure what the '_method does'
-          input(type='hidden', value='DELETE', name='_method') 
-          button(type='submit').
-            Delete
+        form(action='/blobs/#{blob._id}/edit',method='post',enctype='application/x-www-form-urlencoded')
+            input(type='hidden',value='DELETE',name='_method')
+            button(type='submit').
+                Delete
         p
           a(href='/blobs/#{blob._id}/edit') Edit
         p
           a(href='/blobs/#{blob._id}') Show
+  p
+    a(href='/blobs/new') Create New Blob

@@ -101,7 +101,7 @@ router.route('/')
 
   router.route('/:id')
     .get(function(res,req,next){
-      mongoose.model('Blob').findById(id, function(err,blob){
+      mongoose.model('Blob').findById(req.id, function(err,blob){
         if (err){
           console.log("GET Error: There was a problem retrieving: " + err);
         } else {
@@ -121,8 +121,96 @@ router.route('/')
         }
       });
     });
-
   
+  router.route('/:id/edit')
+  //GET the individual blob by Mongo ID
+  .get(function(req,res){
+    mongoose.model('Blob').findById(req.id, function(err,blob){
+      if (err) {
+        console.log("GET Error: There was a problem retrieving " + err);
+      } else {
+        console.log("GET Retrieving ID: " + blob._id); //object id
+        var blobdb = blob.dob.toISOString();
+        blobdob = blobdob.substring(0, blobdob.indexOf('T'));
+        res.format({
+          html: function(){
+            res.render('blobs/edit', {
+              title:  'Blob' + blob._id,
+              "blobdob": blobdob,
+              "blob": blob
+            });
+          },
+          json: function(){
+            res.json(blob);
+          }
+        });
+      }
+    });
+  })
+
+  .put(function(req,res){
+    var name = req.body.name;
+    var badge = req.body.badge;
+    var dob = req.body.dob;
+    var company = req.body.company;
+    var isloved = req.body.isloved;
+
+    //find document by ID
+    mongoose.model('Blob').findById(req.id, function(err,blob){
+      blob.update({
+        name: name,
+        badge: badge,
+        dob: dob,
+        isloved: isloved
+      }, function(err, blobID){
+        if (err){
+          res.send("There was a problem updating the information to the database: " + err);
+        } else {
+          res.format({
+            html: function(){
+              res.redirect("/blobs/" + blob._id);
+            },
+            json: function(){
+              res.json(blob);
+            }
+          });
+        }
+      });
+    });
+  })
+
+  .delete(function(req,res){
+    //find blob by Id
+    mongoose.model('Blob').findByID(req.id, function(err,blob){
+      if (err){
+        return console.error(err);
+      } else {
+        //remove from MongoDB
+        blob.remove(function(err,blob){
+          if (err){
+            return console.error(err);
+          } else {
+            console.log('DELETE removing ID: ' + blob._id);
+            res.format({
+              html: function(){
+                res.redirect("/blobs");
+              },
+              json: function(){
+                res.json({
+                  message: 'deleted',
+                  item: blob
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  });
+
+  module.exports = router;
+
+
 
 
 

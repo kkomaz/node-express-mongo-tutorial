@@ -69,3 +69,75 @@ router.route('/')
       }
     });
   });
+
+  router.get('/new', function(req, res){
+    res.render('blobs/new', {
+      title: 'Add New Blob'
+    });
+  });
+
+  router.param('id', function(req, res, next, id){
+    //find the ID in the Database
+    mongoose.model('Blob').findById(id, function(err,blob){
+      if (err) {
+        console.log(id + ' was not found');
+        res.status = 404;
+        err = new Error('Not Found');
+        err.status = 404;
+        res.format({
+          html: function(){
+            next(err);
+          },
+          json: function(){
+            res.json({message : err.status + ' ' + err});
+          }
+        });
+      } else {
+        req.id = id;
+        next();
+      }
+    });
+  });
+
+  router.route('/:id')
+    .get(function(res,req,next){
+      mongoose.model('Blob').findById(id, function(err,blob){
+        if (err){
+          console.log("GET Error: There was a problem retrieving: " + err);
+        } else {
+          var blobdob = blob.dob.toISOString();
+          blobdob = blobdob.substring(0, blobdob.indexOf('T')); //filtering
+          res.format({
+            html: function(){
+              res.render('blobs/show', {
+                "blobdob": blobdob,
+                "blob": blob
+              });
+            },
+            json: function(){
+              res.json(blob);
+            }
+          });
+        }
+      });
+    });
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

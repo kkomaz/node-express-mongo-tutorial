@@ -57,5 +57,12 @@ app.use(function(err, req, res, next) {
   });
 });
 
+app.configure('development', function() {
+  mongoose.connect('mongodb://localhost/tutorialdb');
+});
+
+app.configure('production', function() {
+  mongoose.connect('mongodb://' + process.env.MONGOLAB_URI + '/tutorialdb');
+});
 
 module.exports = app;

@@ -6,9 +6,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var db = require('./model/db');
 var blob = require('./model/blobs');
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
-
 var app = express();
 
 // view engine setup
